@@ -2,7 +2,6 @@ import os
 import ssl
 import socket
 import logging
-from datetime import datetime
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -39,25 +38,28 @@ def main():
     context = create_ssl_context()
     host, port = "0.0.0.0", 4430
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0) as sock:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.bind((host, port))
         sock.listen(5)
         logging.info(f"🚀 Starte Relay auf {host}:{port}")
 
-        with context.wrap_socket(sock, server_side=True) as ssock:
-            while True:
-                conn, addr = ssock.accept()
-                logging.info(f"🔗 Verbindung von {addr}")
-                try:
-                    data = conn.recv(1024)
-                    if not data:
-                        continue
-                    logging.info(f"📩 Empfangene Daten: {data.decode(errors='ignore')}")
-                    conn.sendall(b"ACK\n")
-                except Exception as e:
-                    logging.error(f"Fehler bei Verbindung {addr}: {e}")
-                finally:
-                    conn.close()
+        while True:
+            client_conn, addr = sock.accept()
+            logging.info(f"🔗 Verbindung von {addr}")
+            try:
+                # SSL auf die einzelne Verbindung anwenden
+                with context.wrap_socket(client_conn, server_side=True) as ssock:
+                    data = ssock.recv(4096)
+                    if data:
+                        decoded = data.decode("utf-8", errors="ignore")
+                        logging.info(f"📩 Empfangene Daten: {decoded}")
+                        # Antwort an Client senden (Unicode-fähig)
+                        response = "✅ Nachricht empfangen!"
+                        ssock.sendall(response.encode("utf-8"))
+            except Exception as e:
+                logging.error(f"Fehler bei Verbindung {addr}: {e}")
+            finally:
+                client_conn.close()
 
 if __name__ == "__main__":
     main()

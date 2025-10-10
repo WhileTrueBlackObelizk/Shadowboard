@@ -1,41 +1,19 @@
-import os
 import base64
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.fernet import Fernet
 
-# ======================================================
-#  AES-GCM ENCRYPTION MODULE
-# ======================================================
-#  Funktionen:
-#   - generate_key() -> bytes
-#   - encrypt_message(key: bytes, plaintext: str) -> str
-#   - decrypt_message(key: bytes, ciphertext_b64: str) -> str
-# ======================================================
+# 🔐 Gemeinsamer Schlüssel (wird bei Start generiert)
+# In der finalen Version kann dieser Schlüssel in einer Datei gespeichert werden, damit Relay + Client denselben verwenden.
+def generate_key():
+    return Fernet.generate_key()
 
+# Temporär: beide nutzen denselben Key beim Start
+SHARED_KEY = generate_key()
+fernet = Fernet(SHARED_KEY)
 
-def generate_key() -> bytes:
-    """Erzeugt einen neuen 256-Bit AES-Schlüssel."""
-    return AESGCM.generate_key(bit_length=256)
+def encrypt_message(message: str) -> bytes:
+    """Verschlüsselt eine Nachricht (Rückgabe: bytes)"""
+    return fernet.encrypt(message.encode())
 
-
-def encrypt_message(key: bytes, plaintext: str) -> str:
-    """
-    Verschlüsselt eine Nachricht mit AES-256-GCM.
-    Gibt einen Base64-kodierten String zurück (Nonce + Ciphertext).
-    """
-    aesgcm = AESGCM(key)
-    nonce = os.urandom(12)  # 96-Bit Nonce
-    ciphertext = aesgcm.encrypt(nonce, plaintext.encode(), None)
-    combined = nonce + ciphertext
-    return base64.b64encode(combined).decode()
-
-
-def decrypt_message(key: bytes, ciphertext_b64: str) -> str:
-    """
-    Entschlüsselt eine AES-256-GCM verschlüsselte Nachricht (Base64 Input).
-    Gibt den Klartext zurück.
-    """
-    aesgcm = AESGCM(key)
-    combined = base64.b64decode(ciphertext_b64.encode())
-    nonce, ciphertext = combined[:12], combined[12:]
-    plaintext = aesgcm.decrypt(nonce, ciphertext, None)
-    return plaintext.decode()
+def decrypt_message(encrypted: bytes) -> str:
+    """Entschlüsselt eine Nachricht (Eingabe: bytes)"""
+    return fernet.decrypt(encrypted).decode()
