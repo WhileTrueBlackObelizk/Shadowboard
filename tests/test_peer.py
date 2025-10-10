@@ -1,14 +1,17 @@
-from src.crypto.encryption import generate_key
-from src.core.peer import SecurePeer
-import threading, time
+import unittest
+from src.core.agents import pick_agent_name
 
-key = generate_key()
+class TestPeer(unittest.TestCase):
+    def test_agent_names_unique(self):
+        """Stellt sicher, dass Agenten-Namen eindeutig zugewiesen werden"""
+        used_names = set()
+        name1 = pick_agent_name(used_names)
+        used_names.add(name1)
+        name2 = pick_agent_name(used_names)
+        used_names.add(name2)
+        self.assertNotEqual(name1, name2)
+        self.assertTrue(name1.startswith("AGENT"))
+        self.assertTrue(name2.startswith("AGENT"))
 
-# Starte Server in Thread
-server = SecurePeer("127.0.0.1", 5555, key, is_server=True)
-threading.Thread(target=server.start, daemon=True).start()
-
-# Warte kurz, dann Client verbinden
-time.sleep(1)
-client = SecurePeer("127.0.0.1", 5555, key)
-threading.Thread(target=client.start, daemon=True).start()
+if __name__ == "__main__":
+    unittest.main()
