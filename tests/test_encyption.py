@@ -1,4 +1,4 @@
-from src.crypto.encryption import generate_key, encrypt_message, decrypt_message
+from src.crypto.encyption import generate_key, encrypt_message, decrypt_message
 
 def test_encryption_cycle():
     key = generate_key()
