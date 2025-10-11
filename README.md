@@ -12,17 +12,10 @@
 ## 🛠 Vorbereitung
 
 1. **Repository klonen / Dateien herunterladen**  
-   Stelle sicher, dass du alle Dateien im Projekt hast, z. B.:
 
-   ```
-   Shadowboard/
-   ├── src/
-   │   ├── core/
-   │   │   ├── relay.py
-   │   │   ├── message_test_multi.py
-   │   │   ├── agents.py
-   │   │   └── crypto/
-   │   │       └── encryption.py
+   ```bash
+   git clone (URL)
+   cd Shadowboard
    ```
 
 2. **Python-Umgebung aktivieren**  
