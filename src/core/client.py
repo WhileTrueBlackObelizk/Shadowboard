@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import socket
 import ssl
+import json
 import threading
 from src.crypto.encryption import encrypt_message, decrypt_message, generate_key
 
