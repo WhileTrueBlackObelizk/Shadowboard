@@ -8,10 +8,10 @@ import time
 import json
 import sys
 from shutil import get_terminal_size
-from src.crypto.encryption import encrypt_message, decrypt_message
-from src.core.agents import pick_agent_name
+from ..crypto.encryption import encrypt_message, decrypt_message
+from .agents import pick_agent_name
 from colorama import Fore, Style, init
-from src.core.banner import print_banner
+from .banner import print_banner
 
 init(autoreset=True)
 

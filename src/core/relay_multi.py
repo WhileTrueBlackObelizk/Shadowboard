@@ -7,10 +7,10 @@ import logging
 import time
 import json
 from shutil import get_terminal_size
-from src.crypto.encryption import decrypt_message 
-from src.crypto.encryption import encrypt_message
-from src.core.agents import pick_agent_name
-from src.core.banner import print_banner
+from ..crypto.encryption import decrypt_message 
+from ..crypto.encryption import encrypt_message
+from .agents import pick_agent_name
+from .banner import print_banner
 
 # Terminal-Farben
 from colorama import init
